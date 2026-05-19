@@ -252,3 +252,20 @@ class Database:
                 'rejected_count': row['rejected_count']
             }
         return None
+
+    def get_eligible_users(self) -> List:
+        """Get all users who are starpoint eligible"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT user_id, matric_number, full_name, total_tokens, created_at
+            FROM users
+            WHERE starpoint_eligible = 1
+            ORDER BY created_at DESC
+        ''')
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        return [dict(row) for row in rows]
