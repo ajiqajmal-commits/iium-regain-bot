@@ -1,0 +1,17 @@
+.env
+.env.local
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+regain_bot.db
+.DS_Store
+*.egg-info/
+dist/
+build/
+.vscode/
+.idea/
+*.log
+.venv/
+venv/
