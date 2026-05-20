@@ -32,6 +32,7 @@ from admin.panel import (
     handle_rejection_reason, view_photo, verify_stats
 )
 from handlers.eligible import eligible_users
+from handlers.export import export_eligible
 
 # Enable logging
 logging.basicConfig(
@@ -79,6 +80,7 @@ def main():
     app.add_handler(CommandHandler("mystats", stats_command))
     app.add_handler(CommandHandler("admin", admin_panel))
     app.add_handler(CommandHandler("eligible", eligible_users))
+    app.add_handler(CommandHandler("export", export_eligible))
     
     # Registration conversation handler - ONLY triggered by /start
     registration_handler = ConversationHandler(
