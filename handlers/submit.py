@@ -128,6 +128,7 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def confirm_submission(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Confirm and create submission"""
+    print(f"DEBUG: confirm_submission called with callback_data: {update.callback_query.data}")
     query = update.callback_query
     await query.answer()
     
@@ -135,6 +136,7 @@ async def confirm_submission(update: Update, context: ContextTypes.DEFAULT_TYPE)
     category = context.user_data.get('category')
     photo_file_id = context.user_data.get('photo_file_id')
     tokens = context.user_data.get('tokens')
+    print(f"DEBUG: category={category}, photo_file_id={photo_file_id}, tokens={tokens}")
     
     if not all([category, photo_file_id, tokens]):
         await query.edit_message_text("❌ Error. Please try again.")

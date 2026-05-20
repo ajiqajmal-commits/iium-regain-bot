@@ -10,6 +10,7 @@ db = Database()
 async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle main menu button clicks"""
     query = update.callback_query
+    print(f"DEBUG: menu_callback called with data: {query.data}")
     await query.answer()
     
     action = query.data.split("_", 1)[1]

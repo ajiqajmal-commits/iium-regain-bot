@@ -71,10 +71,14 @@ async def handle_messages(update: Update, context):
 async def handle_photo(update: Update, context):
     """Handle photo uploads for submission"""
     user_id = update.effective_user.id
+    print(f"DEBUG: handle_photo called for user {user_id}")
     
     # Check if user is awaiting photo upload
     if not context.user_data.get('awaiting_photo'):
+        print(f"DEBUG: awaiting_photo is False, returning")
         return
+    
+    print(f"DEBUG: awaiting_photo is True, processing photo")
     
     if not update.message.photo:
         await update.message.reply_text("❌ Please send a photo.")
@@ -102,6 +106,8 @@ async def handle_photo(update: Update, context):
             InlineKeyboardButton("❌ Cancel", callback_data="cancel_submit")
         ]
     ])
+    
+    print(f"DEBUG: Sending confirmation message with buttons")
     
     await update.message.reply_text(
         f"*Confirm Submission*\n\n"

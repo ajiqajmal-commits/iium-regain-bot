@@ -11,6 +11,7 @@ db = Database()
 async def category_selection_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle category selection from inline buttons"""
     query = update.callback_query
+    print(f"DEBUG: category_selection_callback called with data: {query.data}")
     await query.answer()
     
     # Extract category from callback data (e.g., "cat_reuse" → "reuse")
