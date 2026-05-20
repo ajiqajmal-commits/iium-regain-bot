@@ -157,10 +157,8 @@ def main():
         states={
             CATEGORY_SELECTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, category_handler)],
             PHOTO_UPLOAD: [MessageHandler(filters.PHOTO, photo_handler)],
-            CONFIRMATION: [CallbackQueryHandler(confirm_submission, pattern="^confirm_submit$"),
-                          CallbackQueryHandler(cancel_submission, pattern="^cancel_submit$")],
         },
-        fallbacks=[CommandHandler("cancel", cancel_submission)],
+        fallbacks=[],
     )
     
     # Add conversation handlers (order matters!)
