@@ -162,6 +162,8 @@ def main():
     app.add_handler(submission_handler)  # Must be BEFORE handle_messages
     
     # Callback query handlers
+    app.add_handler(CallbackQueryHandler(confirm_submission, pattern="^confirm_submit$"))
+    app.add_handler(CallbackQueryHandler(cancel_submission, pattern="^cancel_submit$"))
     app.add_handler(CallbackQueryHandler(menu_callback, pattern="^menu_"))
     app.add_handler(CallbackQueryHandler(category_selection_callback, pattern="^cat_"))
     app.add_handler(CallbackQueryHandler(view_photo, pattern="^view_photo_"))
