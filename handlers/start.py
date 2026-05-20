@@ -72,6 +72,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 /start - Go back to main menu
 /help - Show this message
 /mystats - View your progress
+/history - View all your submissions
 
 *Token System:*
 • 🔄 Reuse (personal containers/bags) = +10 tokens
