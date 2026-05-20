@@ -35,6 +35,16 @@ CATEGORY_DESCRIPTIONS = {
     'reduce': ('⬇️ Reduce', 'Opting out of plastic cutlery', 1)
 }
 
+def show_category_buttons():
+    """Get category selection as inline buttons"""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("🔄 Reuse", callback_data="cat_reuse")],
+        [InlineKeyboardButton("♻️ Plastic", callback_data="cat_recycle_plastics")],
+        [InlineKeyboardButton("🥫 Cans", callback_data="cat_recycle_cans")],
+        [InlineKeyboardButton("📄 Paper", callback_data="cat_recycle_paper")],
+        [InlineKeyboardButton("⬇️ Reduce", callback_data="cat_reduce")],
+    ])
+
 async def submit_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start submission process"""
     user_id = update.effective_user.id

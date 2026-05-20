@@ -286,3 +286,21 @@ class Database:
         conn.close()
         
         return [dict(row) for row in rows]
+
+    def get_top_users(self, limit: int = 10) -> List:
+        """Get top users by total tokens"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT user_id, full_name, total_tokens, starpoint_eligible
+            FROM users
+            WHERE total_tokens > 0
+            ORDER BY total_tokens DESC
+            LIMIT ?
+        ''', (limit,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        return [dict(row) for row in rows]

@@ -34,6 +34,7 @@ from admin.panel import (
 )
 from handlers.eligible import eligible_users
 from handlers.export import export_eligible
+from handlers.menu import menu_callback
 
 # Enable logging
 logging.basicConfig(
@@ -113,6 +114,7 @@ def main():
     app.add_handler(submission_handler)  # Must be BEFORE handle_messages
     
     # Callback query handlers
+    app.add_handler(CallbackQueryHandler(menu_callback, pattern="^menu_"))
     app.add_handler(CallbackQueryHandler(view_photo, pattern="^view_photo_"))
     app.add_handler(CallbackQueryHandler(approve_submission_callback, pattern="^approve_"))
     app.add_handler(CallbackQueryHandler(reject_submission_callback, pattern="^reject_"))

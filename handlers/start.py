@@ -1,7 +1,7 @@
 """
 Start command handler
 """
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from database.db import Database
 
@@ -18,10 +18,12 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user:
         # User already registered
         stats = db.get_user_stats(user_id)
+        progress_bar = get_progress_bar(stats['total_tokens'], 30)
         await update.message.reply_text(
             f"Welcome back, {user['full_name'] or 'User'}! 🌍\n\n"
             f"📊 Your Progress:\n"
-            f"• Total Tokens: {stats['total_tokens']}/{30}\n"
+            f"• Total Tokens: {stats['total_tokens']}/30\n"
+            f"{progress_bar}\n"
             f"• Status: {'✅ Starpoint Eligible!' if stats['starpoint_eligible'] else '⏳ Keep going!'}\n\n"
             f"What would you like to do?",
             reply_markup=get_main_menu_keyboard()
@@ -39,15 +41,27 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return MATRIC_INPUT
 
 def get_main_menu_keyboard():
-    """Get main menu keyboard"""
-    return ReplyKeyboardMarkup(
+    """Get main menu with inline buttons"""
+    return InlineKeyboardMarkup([
         [
-            ['📤 Submit Action', '📊 View Progress'],
-            ['❓ How it Works', '🆘 Help']
+            InlineKeyboardButton("📤 Submit Action", callback_data="menu_submit"),
+            InlineKeyboardButton("📊 My History", callback_data="menu_history")
         ],
-        resize_keyboard=True,
-        one_time_keyboard=False
-    )
+        [
+            InlineKeyboardButton("📈 My Stats", callback_data="menu_stats"),
+            InlineKeyboardButton("❓ How it Works", callback_data="menu_help")
+        ],
+        [
+            InlineKeyboardButton("🏆 Leaderboard", callback_data="menu_leaderboard")
+        ]
+    ])
+
+def get_progress_bar(current: int, target: int) -> str:
+    """Generate a visual progress bar"""
+    filled = min(current * 10 // target, 10)
+    empty = 10 - filled
+    bar = "█" * filled + "░" * empty
+    return f"`{bar}` {current}/{target}"
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /help command"""
