@@ -269,3 +269,20 @@ class Database:
         conn.close()
         
         return [dict(row) for row in rows]
+
+    def get_user_submissions(self, user_id: int) -> List:
+        """Get all submissions for a user"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT submission_id, category, tokens_awarded, status, created_at, verified_at
+            FROM submissions
+            WHERE user_id = ?
+            ORDER BY created_at DESC
+        ''', (user_id,))
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        return [dict(row) for row in rows]

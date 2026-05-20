@@ -17,6 +17,7 @@ db = Database()
 from handlers.start import (
     start_command, help_command, stats_command, MATRIC_INPUT
 )
+from handlers.history import history_command
 from handlers.register import (
     matric_handler, name_handler, cancel_registration,
     NAME_INPUT
@@ -78,6 +79,7 @@ def main():
     # Command handlers
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("mystats", stats_command))
+    app.add_handler(CommandHandler("history", history_command))
     app.add_handler(CommandHandler("admin", admin_panel))
     app.add_handler(CommandHandler("eligible", eligible_users))
     app.add_handler(CommandHandler("export", export_eligible))
