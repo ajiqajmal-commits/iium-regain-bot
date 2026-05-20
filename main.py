@@ -2,7 +2,7 @@
 Main Telegram Bot for IIUM Re:Gain Initiative
 """
 import logging
-from telegram import Update
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import (
     Application, CommandHandler, MessageHandler, filters,
     ConversationHandler, CallbackQueryHandler
@@ -35,6 +35,7 @@ from admin.panel import (
 from handlers.eligible import eligible_users
 from handlers.export import export_eligible
 from handlers.menu import menu_callback
+from handlers.category import category_selection_callback
 
 # Enable logging
 logging.basicConfig(
@@ -66,6 +67,53 @@ async def handle_messages(update: Update, context):
             await help_command(update, context)
     else:
         await update.message.reply_text("❌ Please register first with /start")
+
+async def handle_photo(update: Update, context):
+    """Handle photo uploads for submission"""
+    user_id = update.effective_user.id
+    
+    # Check if user is awaiting photo upload
+    if not context.user_data.get('awaiting_photo'):
+        return
+    
+    if not update.message.photo:
+        await update.message.reply_text("❌ Please send a photo.")
+        return
+    
+    # Get photo file ID
+    photo_file_id = update.message.photo[-1].file_id
+    context.user_data['photo_file_id'] = photo_file_id
+    
+    # Import confirmation function
+    from handlers.submit import CATEGORY_DESCRIPTIONS
+    category = context.user_data.get('category')
+    tokens = context.user_data.get('tokens')
+    
+    if not category or not tokens:
+        await update.message.reply_text("❌ Session expired. Try again with /start")
+        return
+    
+    emoji, description, _ = CATEGORY_DESCRIPTIONS[category]
+    
+    # Show confirmation
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("✅ Confirm", callback_data="confirm_submit"),
+            InlineKeyboardButton("❌ Cancel", callback_data="cancel_submit")
+        ]
+    ])
+    
+    await update.message.reply_text(
+        f"*Confirm Submission*\n\n"
+        f"Action: {emoji} {description}\n"
+        f"Tokens: +{tokens}\n\n"
+        f"Is this correct?",
+        reply_markup=keyboard,
+        parse_mode='Markdown'
+    )
+    
+    # Clear awaiting_photo flag
+    context.user_data['awaiting_photo'] = False
 
 def main():
     """Main function to run the bot"""
@@ -115,6 +163,7 @@ def main():
     
     # Callback query handlers
     app.add_handler(CallbackQueryHandler(menu_callback, pattern="^menu_"))
+    app.add_handler(CallbackQueryHandler(category_selection_callback, pattern="^cat_"))
     app.add_handler(CallbackQueryHandler(view_photo, pattern="^view_photo_"))
     app.add_handler(CallbackQueryHandler(approve_submission_callback, pattern="^approve_"))
     app.add_handler(CallbackQueryHandler(reject_submission_callback, pattern="^reject_"))
@@ -122,6 +171,7 @@ def main():
     app.add_handler(CallbackQueryHandler(cancel_reject_callback, pattern="^cancel_reject$"))
     
     # Unified message handler for buttons and rejection reasons
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))  # Handle photos first
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_messages))
     
     # Start the bot
